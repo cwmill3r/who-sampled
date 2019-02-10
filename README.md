@@ -8,5 +8,4 @@ Go ahead and clone this repo to your local machines with:
 
 git clone https://github.com/cwmill3r/who-sampled.git
 
-I will update this with our boilerplate project soon
 
