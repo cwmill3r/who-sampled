@@ -1,0 +1,84 @@
+[
+  {
+    "songPlaylistId": "PLM5JVEgIGu5qi5t6-UehLuRTb6QDsqKiA",
+    "samplePlaylistId": "PLM5JVEgIGu5pdPh59wO0Q8QaNcCwVtm_M",
+    "questions": [
+      {
+        "sampleId": "cFU-FJzPE80",
+        "songId": "uxpDa-c-4Mc"
+      },
+      {
+        "sampleId": "rMB-wx7LmdQ",
+        "songId": "AMCwYdTJ_PE"
+      },
+      {
+        "sampleId": "xKISdd2mKzU",
+        "songId": "sNPnbI1arSE"
+      },
+      {
+        "sampleId": "zY0--b6DLqQ",
+        "songId": "1plPyJdXKIY"
+      },
+      {
+        "sampleId": "Mrd14PxaUco",
+        "songId": "6vwNcNOTVzY"
+      },
+      {
+        "sampleId": "Bcp3JGhx_Ck",
+        "songId": "qJmPTQipOeI"
+      },
+      {
+        "sampleId": "D9t5qM8UKxA",
+        "songId": "5wBTdfAkqGU"
+      },
+      {
+        "sampleId": "El1kgCqD7Xk",
+        "songId": "NNFIqZtSxZI"
+      },
+      {
+        "sampleId": "6pG_3jZxzlo",
+        "songId": "QZXc39hT8t4"
+      },
+      {
+        "sampleId": "etwIu8-FlGU",
+        "songId": "h4UqMyldS7Q"
+      },
+      {
+        "sampleId": "_H3Sv2zad6s",
+        "songId": "fPO76Jlnz6c"
+      }
+    ],
+    "wrongAnswerBank": [
+      {
+        "artist": "someArtist",
+        "title": "someTitle",
+        "year": 1969
+      },
+      {
+        "artist": "someArtist",
+        "title": "someTitle",
+        "year": 1969
+      },
+      {
+        "artist": "someArtist",
+        "title": "someTitle",
+        "year": 1969
+      },
+      {
+        "artist": "someArtist",
+        "title": "someTitle",
+        "year": 1969
+      },
+      {
+        "artist": "someArtist",
+        "title": "someTitle",
+        "year": 1969
+      },
+      {
+        "artist": "someArtist",
+        "title": "someTitle",
+        "year": 1969
+      }
+    ]
+  }
+]
