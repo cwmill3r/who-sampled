@@ -1,5 +1,6 @@
 const KEY = 'AIzaSyD11iA-eBNZjIhZ5FtVJhqTkZEgph6zrXY';
 const PLAYLIST = 'PLM5JVEgIGu5pdPh59wO0Q8QaNcCwVtm_M';
+const TESTPLAYLIST = 'PLM5JVEgIGu5oh1sIjQZSfSiyAhWTZeQCH';
 
 // include axios from CDN -- see youtube.html
 
@@ -31,13 +32,13 @@ const quizTemplate = `
 `;
 
 async function renderQuizQuestions() {
-  var response = await youtube.get('/playlistItems', {
+  const response = await youtube.get('/playlistItems', {
     params: {
       playlistId: PLAYLIST
     }
   });
   console.log(response.data.items);
-  var videoList = response.data.items;
+  const videoList = response.data.items;
 
   videoList.map(function(video) {
     console.log(video.contentDetails.videoId);
