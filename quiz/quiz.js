@@ -2,13 +2,15 @@ const KEY = 'AIzaSyD11iA-eBNZjIhZ5FtVJhqTkZEgph6zrXY';
 const PLAYLIST = 'PLM5JVEgIGu5pdPh59wO0Q8QaNcCwVtm_M';
 const TESTPLAYLIST = 'PLM5JVEgIGu5oh1sIjQZSfSiyAhWTZeQCH';
 
+const videoList = undefined;
+
 // include axios from CDN -- see youtube.html
 
 const youtube = axios.create({
   baseURL: 'https://www.googleapis.com/youtube/v3',
   params: {
     part: 'snippet, contentDetails',
-    maxresults: 10,
+    maxresults: 15,
     key: KEY
   }
 });
@@ -38,7 +40,7 @@ async function renderQuizQuestions() {
     }
   });
   console.log(response.data.items);
-  const videoList = response.data.items;
+  videoList = response.data.items;
 
   videoList.map(function(video) {
     console.log(video.contentDetails.videoId);

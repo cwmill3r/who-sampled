@@ -1,83 +1,84 @@
 [
   {
-    "songPlaylistId": "PLM5JVEgIGu5qi5t6-UehLuRTb6QDsqKiA",
-    "samplePlaylistId": "PLM5JVEgIGu5pdPh59wO0Q8QaNcCwVtm_M",
-    "questions": [
+    "id": 0,
+    "quizName": "hip-hop samples quiz",
+    "quizQuestions": [
       {
-        "sampleId": "cFU-FJzPE80",
-        "songId": "uxpDa-c-4Mc"
+        "videoID": "h73jdkf80k",
+        "questionText": "which hiphop artist used this sample?",
+        "rightAnswer": "Drake: blah blah blah",
+        "wrongAnswers": [
+          "Kanye West: blah blah blah",
+          "Ski Mask the Slump God: blah blah blah",
+          "Lil Uzi Vert: blah blah blah",
+          "Trippie Redd: blah blah blah"
+        ]
       },
       {
-        "sampleId": "rMB-wx7LmdQ",
-        "songId": "AMCwYdTJ_PE"
+        "videoID": "h73jdkf80k",
+        "questionText": "which hiphop artist used this sample?",
+        "rightAnswer": "Drake: blah blah blah",
+        "wrongAnswers": [
+          "Kanye West: blah blah blah",
+          "Ski Mask the Slump God: blah blah blah",
+          "Lil Uzi Vert: blah blah blah",
+          "Trippie Redd: blah blah blah"
+        ]
       },
       {
-        "sampleId": "xKISdd2mKzU",
-        "songId": "sNPnbI1arSE"
+        "videoID": "h73jdkf80k",
+        "questionText": "which hiphop artist used this sample?",
+        "rightAnswer": "Drake: blah blah blah",
+        "wrongAnswers": [
+          "Kanye West: blah blah blah",
+          "Ski Mask the Slump God: blah blah blah",
+          "Lil Uzi Vert: blah blah blah",
+          "Trippie Redd: blah blah blah"
+        ]
       },
       {
-        "sampleId": "zY0--b6DLqQ",
-        "songId": "1plPyJdXKIY"
+        "videoID": "h73jdkf80k",
+        "questionText": "which hiphop artist used this sample?",
+        "rightAnswer": "Drake: blah blah blah",
+        "wrongAnswers": [
+          "Kanye West: blah blah blah",
+          "Ski Mask the Slump God: blah blah blah",
+          "Lil Uzi Vert: blah blah blah",
+          "Trippie Redd: blah blah blah"
+        ]
       },
       {
-        "sampleId": "Mrd14PxaUco",
-        "songId": "6vwNcNOTVzY"
+        "videoID": "h73jdkf80k",
+        "questionText": "which hiphop artist used this sample?",
+        "rightAnswer": "Drake: blah blah blah",
+        "wrongAnswers": [
+          "Kanye West: blah blah blah",
+          "Ski Mask the Slump God: blah blah blah",
+          "Lil Uzi Vert: blah blah blah",
+          "Trippie Redd: blah blah blah"
+        ]
       },
       {
-        "sampleId": "Bcp3JGhx_Ck",
-        "songId": "qJmPTQipOeI"
+        "videoID": "h73jdkf80k",
+        "questionText": "which hiphop artist used this sample?",
+        "rightAnswer": "Drake: blah blah blah",
+        "wrongAnswers": [
+          "Kanye West: blah blah blah",
+          "Ski Mask the Slump God: blah blah blah",
+          "Lil Uzi Vert: blah blah blah",
+          "Trippie Redd: blah blah blah"
+        ]
       },
       {
-        "sampleId": "D9t5qM8UKxA",
-        "songId": "5wBTdfAkqGU"
-      },
-      {
-        "sampleId": "El1kgCqD7Xk",
-        "songId": "NNFIqZtSxZI"
-      },
-      {
-        "sampleId": "6pG_3jZxzlo",
-        "songId": "QZXc39hT8t4"
-      },
-      {
-        "sampleId": "etwIu8-FlGU",
-        "songId": "h4UqMyldS7Q"
-      },
-      {
-        "sampleId": "_H3Sv2zad6s",
-        "songId": "fPO76Jlnz6c"
-      }
-    ],
-    "wrongAnswerBank": [
-      {
-        "artist": "someArtist",
-        "title": "someTitle",
-        "year": 1969
-      },
-      {
-        "artist": "someArtist",
-        "title": "someTitle",
-        "year": 1969
-      },
-      {
-        "artist": "someArtist",
-        "title": "someTitle",
-        "year": 1969
-      },
-      {
-        "artist": "someArtist",
-        "title": "someTitle",
-        "year": 1969
-      },
-      {
-        "artist": "someArtist",
-        "title": "someTitle",
-        "year": 1969
-      },
-      {
-        "artist": "someArtist",
-        "title": "someTitle",
-        "year": 1969
+        "videoID": "h73jdkf80k",
+        "questionText": "which hiphop artist used this sample?",
+        "rightAnswer": "Drake: blah blah blah",
+        "wrongAnswers": [
+          "Kanye West: blah blah blah",
+          "Ski Mask the Slump God: blah blah blah",
+          "Lil Uzi Vert: blah blah blah",
+          "Trippie Redd: blah blah blah"
+        ]
       }
     ]
   }
