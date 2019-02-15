@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="en" style="height:100%">
+  <title>Who Sampled?</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Montserrat"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  />
+  <link rel="stylesheet" href="./index.css" />
+  <style>
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: 'Lato', sans-serif;
+    }
+    .w3-bar,
+    h1,
+    button {
+      font-family: 'Montserrat', sans-serif;
+    }
+    .fa-anchor,
+    .fa-coffee {
+      font-size: 200px;
+    }
+  </style>
+  <body style="height:100%">
+    <!-- Navbar -->
+    <div class="w3-top">
+      <div class="w3-bar w3-indigo w3-card w3-left-align w3-large">
+        <a
+          class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large"
+          href="javascript:void(0);"
+          onclick="myFunction()"
+          title="Toggle Navigation Menu"
+        >
+          <i class="fa fa-bars"></i>
+        </a>
+        <a id="home-tab-link" href="#" class="w3-bar-item w3-button w3-padding-large w3-white">
+          Home
+        </a>
+        <a
+          href="#"
+          class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
+        >
+          About
+        </a>
+        <a
+          id="account-tab-link"
+          href="#"
+          class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
+        >
+          Account
+        </a>
+        <a
+          href="#"
+          class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
+        >
+          Add Question
+        </a>
+      </div>
+
+      <!-- Navbar on small screens -->
+      <div
+        id="navDemo"
+        class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large"
+      >
+        <a href="#" class="w3-bar-item w3-button w3-padding-large">About</a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large">
+          Account Settings
+        </a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large">
+          Add Question
+        </a>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div
+      id="main-content-wrapper"
+      class="w3-light-blue w3-container"
+      style="height:100%;"
+    >
+      <div id="homeTab" class="w3-display-middle w3-center w3-light-blue">
+        <h1 class="w3-margin w3-text-indigo w3-jumbo">Who Sampled?</h1>
+        <p class="w3-large w3-text-indigo">
+          Test your knowledge of hip-hop production!
+        </p>
+        <button
+          class="w3-button w3-indigo w3-padding-large w3-large w3-margin-top"
+        >
+          Play Game
+        </button>
+      </div>
+
+      <!-- Login form section in account tab-->
+      <div
+        id="accountTab"
+        class="w3-container w3-display-middle"
+        style="visibility: hidden;"
+      >
+        <div id="login-content" class="w3-border">
+          <div class="w3-container w3-teal">
+            <h2>Login</h2>
+          </div>
+          <form id="login-form" class="w3-container">
+            <div class="w3-section">
+              <input id="logonId" class="w3-input" type="text" />
+              <label class="w3-text-grey">Username</label>
+            </div>
+            <div class="w3-section">
+              <input id="logonPassword" class="w3-input" type="text" />
+              <label class="w3-text-grey">Password</label>
+            </div>
+            <div class="w3-section">
+              <input class="w3-button w3-teal" type="submit" />
+            </div>
+            <div class="w3-section">
+              <a class="w3-text-indigo" id="create-account-link" href="#">Create Account</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- account settings code aka account page -->
+      <div id="accountSettingsTab" class="w3-container w3-display-middle-top" style="visibility: hidden;">
+        <div class="w3-section">
+          hello nerd
+          <img src="http://i.pravatar.cc/300" class="w3-bar-item w3-circle w3-hide-small" style="width:85px">
+          <button id="logoff-button">Logoff</button> 
+        </div>
+        <ul class="w3-ul w3-card-4">
+          <li class="w3-bar">
+            <span onclick="this.parentElement.style.display='none'" class="w3-bar-item w3-button w3-white w3-xlarge w3-right">×</span>
+            
+            <div class="w3-bar-item">
+              <span class="w3-large">Question title</span><br>
+              <span>Question content</span>
+            </div>
+          </li>
+
+          <li class="w3-bar">
+            <span onclick="this.parentElement.style.display='none'" class="w3-bar-item w3-button w3-white w3-xlarge w3-right">×</span>
+            <div class="w3-bar-item">
+              <span class="w3-large">Another Question</span><br>
+              <span>Some other content</span>
+            </div>
+          </li>
+
+          <li class="w3-bar">
+            <span onclick="this.parentElement.style.display='none'" class="w3-bar-item w3-button w3-white w3-xlarge w3-right">×</span>
+            <div class="w3-bar-item">
+              <span class="w3-large">Yet Another Question</span><br>
+              <span>Some more stuff about a question they maybe submitted</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Create account html -->
+      <div id="createAccountTab" class="w3-container w3-display-middle" style="visibility: hidden;">
+        <div class="w3-card-4">
+          <div class="w3-container w3-teal">
+            <h2>Create Account</h2>
+          </div>
+          <form id="create-account-form" class="w3-container">
+            <p>
+              <label class="w3-text-teal"><b>Username</b></label>
+              <input id="ca-username" class="w3-input w3-border w3-light-grey" type="text">
+            </p>
+            <p>
+              <label class="w3-text-teal"><b>Password</b></label>
+              <input id="ca-password" class="w3-input w3-border w3-light-grey" type="text">
+            </p>
+            <p>
+              <label class="w3-text-teal"><b>First Name</b></label>
+              <input id="ca-firstname" class="w3-input w3-border w3-light-grey" type="text">
+            </p>
+            <p>
+              <label class="w3-text-teal"><b>Last Name</b></label>
+              <input id="ca-lastname" class="w3-input w3-border w3-light-grey" type="text">
+            </p>
+            <p>
+              <label class="w3-text-teal"><b>Email</b></label>
+              <input id="ca-email" class="w3-input w3-border w3-light-grey" type="text">
+            </p>
+            <p>
+              <input id="create-account-button" type="submit" class="w3-btn w3-teal" href="#" target="_blank"></input>
+            </p>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      // Used to toggle the menu on small screens when clicking on the menu button
+      function myFunction() {
+        var x = document.getElementById('navDemo');
+        if (x.className.indexOf('w3-show') == -1) {
+          x.className += ' w3-show';
+        } else {
+          x.className = x.className.replace(' w3-show', '');
+        }
+      }
+    </script>
+    <script src="./index.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+    ></script>
+  </body>
+</html>
