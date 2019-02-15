@@ -32,6 +32,53 @@
     .fa-coffee {
       font-size: 200px;
     }
+    .buttonContainer{
+      position: relative;
+      width: 100%;
+    }
+    /* Style the button and place it in the middle of the container/image */
+    .buttonContainer #playBtn{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      font-size: 16px;
+      padding: 12px 24px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .triviaQuestions{
+      float:right;
+    }
+    #videoPane{
+      float:left;
+    }
+    .triviaQuestions #answerBtn{
+      display: block;
+      width:75%;
+      padding: 10px;
+      margin-left:50px;
+
+    }
+    .triviaQuestions #answerBtn:hover{
+      background-color: grey;
+      color: white
+    }
+    #playBtn{
+      background-color: Transparent;
+      background-repeat:no-repeat;
+      border: none;
+      cursor:pointer;
+      overflow: hidden; 
+      text-transform: uppercase;
+      font-weight:bold;
+    }
+    #submitButton{
+      clear:left;
+    }
+  
   </style>
   <body style="height:100%">
     <!-- Navbar -->
@@ -90,11 +137,34 @@
         <p class="w3-large w3-text-indigo">
           Test your knowledge of hip-hop production!
         </p>
+        <div class = "buttonContainer">
         <button
-          class="w3-button w3-indigo w3-padding-large w3-large w3-margin-top"
+          id = "playBtn"
+          style = "font-size: 35px; height: 100%;"
         >
           Play Game
         </button>
+         <img src ="GoldRecord.png" alt = "Record" style = "width:250px;height:250px">
+       </div>
+      </div>
+    </div>
+
+    <div class="w3-display-container w3-light-blue" style="height:100%;">
+      <div class="w3-display-middle w3-center w3-light-blue">
+        <div class = "TriviaPage" >
+          <iframe id = "videoPane" width="420" height="315"
+            src="https://www.youtube.com/embed/uxpDa-c-4Mc">
+          </iframe>
+        </div>
+          <div class = "triviaQuestions" >
+            <h3 >What song did they sample from?</h3>
+            <button id = answerBtn>Sample 1</button>
+            <button id = answerBtn>Sample 2</button>
+            <button id = answerBtn>Sample 3</button>
+            <button id = answerBtn>Sample 4</button>
+            <button class="w3-button w3-indigo w3-padding-large w3-large w3-margin-top" id = "submitButton">
+            Submit</button>
+          </div>
       </div>
     </div>
 
