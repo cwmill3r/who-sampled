@@ -3,6 +3,7 @@ const sampleQuiz = {
   questions: [
     {
       questionId: 0,
+      creatorId: 7,
       questionText: 'who sampled?',
       videoId: 'cFU-FJzPE80',
       correctAns: 'Hotline Bling by Drake',
@@ -14,6 +15,7 @@ const sampleQuiz = {
     },
     {
       questionId: 1,
+      creatorId: 7,
       videoId: 'rMB-wx7LmdQ',
       questionText: 'who sampled?',
       correctAns: 'Mask Off by Future',
@@ -25,6 +27,7 @@ const sampleQuiz = {
     },
     {
       questionId: 2,
+      creatorId: 7,
       videoId: 'xKISdd2mKzU',
       questionText: 'who sampled?',
       correctAns: 'My Name Is by Eminem',
@@ -36,6 +39,7 @@ const sampleQuiz = {
     },
     {
       questionId: 3,
+      creatorId: 7,
       videoId: 'zY0--b6DLqQ',
       questionText: 'who sampled?',
       correctAns: 'Regulate by Warren G',
@@ -47,6 +51,7 @@ const sampleQuiz = {
     },
     {
       questionId: 4,
+      creatorId: 7,
       videoId: 'Mrd14PxaUco',
       questionText: 'who sampled?',
       correctAns: 'Gold Digger by Kanye West',
