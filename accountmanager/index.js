@@ -6,8 +6,8 @@ const sampleQuiz = {
       creatorId: 7,
       questionText: 'who sampled?',
       videoId: 'cFU-FJzPE80',
-      correctAns: 'Hotline Bling by Drake',
-      wrongAnsArr: [
+      correctAnswer: 'Hotline Bling by Drake',
+      wrongAnswers: [
         'Work Out by J Cole',
         'California Love by Tupac',
         "Gangsta's Paradise by Coolio"
@@ -18,8 +18,8 @@ const sampleQuiz = {
       creatorId: 7,
       videoId: 'rMB-wx7LmdQ',
       questionText: 'who sampled?',
-      correctAns: 'Mask Off by Future',
-      wrongAnsArr: [
+      correctAnswer: 'Mask Off by Future',
+      wrongAnsAnwers: [
         'Work Out by J Cole',
         'California Love by Tupac',
         "Gangsta's Paradise by Coolio"
@@ -30,8 +30,8 @@ const sampleQuiz = {
       creatorId: 7,
       videoId: 'xKISdd2mKzU',
       questionText: 'who sampled?',
-      correctAns: 'My Name Is by Eminem',
-      wrongAnsArr: [
+      correctAnswer: 'My Name Is by Eminem',
+      wrongAnswers: [
         'Work Out by J Cole',
         'California Love by Tupac',
         "Gangsta's Paradise by Coolio"
@@ -42,8 +42,8 @@ const sampleQuiz = {
       creatorId: 7,
       videoId: 'zY0--b6DLqQ',
       questionText: 'who sampled?',
-      correctAns: 'Regulate by Warren G',
-      wrongAnsArr: [
+      correctAnswer: 'Regulate by Warren G',
+      wrongAnswers: [
         'Work Out by J Cole',
         'California Love by Tupac',
         "Gangsta's Paradise by Coolio"
@@ -54,8 +54,8 @@ const sampleQuiz = {
       creatorId: 7,
       videoId: 'Mrd14PxaUco',
       questionText: 'who sampled?',
-      correctAns: 'Gold Digger by Kanye West',
-      wrongAnsArr: [
+      correctAnswer: 'Gold Digger by Kanye West',
+      wrongAnswers: [
         'Work Out by J Cole',
         'California Love by Tupac',
         "Gangsta's Paradise by Coolio"
