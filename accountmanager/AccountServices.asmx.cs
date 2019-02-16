@@ -219,15 +219,6 @@ namespace accountmanager
                 sqlConnection.Close();
             }
         }
-
-
-
-
-
-
-
-
-
         //EXAMPLE OF A SELECT, AND RETURNING "COMPLEX" DATA TYPES
         [WebMethod(EnableSession = true)]
         public Account[] GetAccountRequests()
@@ -346,6 +337,83 @@ namespace accountmanager
             }
         }
 
+        //Our main service to get our questions out of the db
+        [WebMethod(EnableSession = true)]
+        public Question[] GetAllQuestions()
+        {
+            //LOGIC: get all questions without their answers first
+            DataTable sqlDt = new DataTable("questions");
 
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            //select all the questions *this wont iclude wrong answers*
+            string sqlSelect = "select * from questions";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+            sqlDa.Fill(sqlDt);
+
+            DataTable sqlDtWrong = new DataTable("wrongAnswers");
+            // Now add the wrong answers
+            string sqlSelectWrong = "select q.questionId, w.wrongAnswerText from questions q, wrong_answers w where q.questionId = w.questionId";
+            MySqlCommand sqlCommandWrong = new MySqlCommand(sqlSelectWrong, sqlConnection);
+            MySqlDataAdapter sqlDaWrong = new MySqlDataAdapter(sqlCommandWrong);
+            sqlDaWrong.Fill(sqlDtWrong);
+
+            List<Question> tmpQuestions = new List<Question>();
+
+            // get all the questions without the wrong answers
+            for (int i = 0; i < sqlDt.Rows.Count; i++)
+            {
+                tmpQuestions.Add(new Question
+                {
+                    questionId = Convert.ToInt32(sqlDt.Rows[i]["questionId"]),
+                    creatorId = Convert.ToInt32(sqlDt.Rows[i]["creatorId"]),
+                    questionText = sqlDt.Rows[i]["questionText"].ToString(),
+                    videoId = sqlDt.Rows[i]["videoId"].ToString(),
+                    correctAnswerText = sqlDt.Rows[i]["correctAnswerText"].ToString()
+                });
+            }
+            // get all the wrong answers
+            List<WrongAnswer> wrongAnswersList = new List<WrongAnswer>();
+            for (int i = 0; i < sqlDtWrong.Rows.Count; i++)
+            {
+                wrongAnswersList.Add(new WrongAnswer
+                {
+                    questionId = Convert.ToInt32(sqlDtWrong.Rows[i]["questionId"]),
+                    wrongAnswerText = sqlDtWrong.Rows[i]["wrongAnswerText"].ToString()
+                });
+            }
+            // call the helper method to combine
+            List<Question> questionsWithWrongAnswers = CombineQuestions(tmpQuestions, wrongAnswersList);
+
+            //convert the list of accounts to an array and return!
+            return questionsWithWrongAnswers.ToArray();
+        }   
+
+        // combine questions with wrong answers helper function
+        public List<Question> CombineQuestions(List<Question> questionList,  List<WrongAnswer> wrongAnswersList)
+        {
+            for(int i = 0; i < questionList.Count; i++)
+            {
+                int tempId = questionList[i].questionId;
+                Question tmpQuestion = new Question();
+                List<WrongAnswer> tmpList = new List<WrongAnswer>();
+
+                for(int j = 0; j < wrongAnswersList.Count; j++)
+                {
+                    if(tempId == wrongAnswersList[j].questionId)
+                    {
+                        tmpList.Add(new WrongAnswer {
+                            questionId = wrongAnswersList[j].questionId,
+                            wrongAnswerText = wrongAnswersList[j].wrongAnswerText
+                        });
+                    }
+                }
+                questionList[i].wrongAnswers = tmpList;
+            }
+            return questionList;
+        }
     }
 }

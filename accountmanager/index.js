@@ -1,70 +1,71 @@
-const sampleQuiz = {
-  quizId: 0,
-  questions: [
-    {
-      questionId: 0,
-      creatorId: 7,
-      questionText: 'who sampled?',
-      videoId: 'cFU-FJzPE80',
-      correctAnswerText: 'Hotline Bling by Drake',
-      wrongAnswers: [
-        'Work Out by J Cole',
-        'California Love by Tupac',
-        "Gangsta's Paradise by Coolio"
-      ]
-    },
-    {
-      questionId: 1,
-      creatorId: 7,
-      videoId: 'rMB-wx7LmdQ',
-      questionText: 'who sampled?',
-      correctAnswerText: 'Mask Off by Future',
-      wrongAnsAnwers: [
-        'Work Out by J Cole',
-        'California Love by Tupac',
-        "Gangsta's Paradise by Coolio"
-      ]
-    },
-    {
-      questionId: 2,
-      creatorId: 7,
-      videoId: 'xKISdd2mKzU',
-      questionText: 'who sampled?',
-      correctAnswerText: 'My Name Is by Eminem',
-      wrongAnswers: [
-        'Work Out by J Cole',
-        'California Love by Tupac',
-        "Gangsta's Paradise by Coolio"
-      ]
-    },
-    {
-      questionId: 3,
-      creatorId: 7,
-      videoId: 'zY0--b6DLqQ',
-      questionText: 'who sampled?',
-      correctAnswerText: 'Regulate by Warren G',
-      wrongAnswers: [
-        'Work Out by J Cole',
-        'California Love by Tupac',
-        "Gangsta's Paradise by Coolio"
-      ]
-    },
-    {
-      questionId: 4,
-      creatorId: 7,
-      videoId: 'Mrd14PxaUco',
-      questionText: 'who sampled?',
-      correctAnswerText: 'Gold Digger by Kanye West',
-      wrongAnswers: [
-        'Work Out by J Cole',
-        'California Love by Tupac',
-        "Gangsta's Paradise by Coolio"
-      ]
-    }
-  ]
-};
-
+//const sampleQuiz = {
+//  quizId: 0,
+//  questions: [
+//    {
+//      questionId: 0,
+//      creatorId: 7,
+//      questionText: 'who sampled?',
+//      videoId: 'cFU-FJzPE80',
+//      correctAnswerText: 'Hotline Bling by Drake',
+//      wrongAnswers: [
+//        'Work Out by J Cole',
+//        'California Love by Tupac',
+//        "Gangsta's Paradise by Coolio"
+//      ]
+//    },
+//    {
+//      questionId: 1,
+//      creatorId: 7,
+//      videoId: 'rMB-wx7LmdQ',
+//      questionText: 'who sampled?',
+//      correctAnswerText: 'Mask Off by Future',
+//      wrongAnsAnwers: [
+//        'Work Out by J Cole',
+//        'California Love by Tupac',
+//        "Gangsta's Paradise by Coolio"
+//      ]
+//    },
+//    {
+//      questionId: 2,
+//      creatorId: 7,
+//      videoId: 'xKISdd2mKzU',
+//      questionText: 'who sampled?',
+//      correctAnswerText: 'My Name Is by Eminem',
+//      wrongAnswers: [
+//        'Work Out by J Cole',
+//        'California Love by Tupac',
+//        "Gangsta's Paradise by Coolio"
+//      ]
+//    },
+//    {
+//      questionId: 3,
+//      creatorId: 7,
+//      videoId: 'zY0--b6DLqQ',
+//      questionText: 'who sampled?',
+//      correctAnswerText: 'Regulate by Warren G',
+//      wrongAnswers: [
+//        'Work Out by J Cole',
+//        'California Love by Tupac',
+//        "Gangsta's Paradise by Coolio"
+//      ]
+//    },
+//    {
+//      questionId: 4,
+//      creatorId: 7,
+//      videoId: 'Mrd14PxaUco',
+//      questionText: 'who sampled?',
+//      correctAnswerText: 'Gold Digger by Kanye West',
+//      wrongAnswers: [
+//        'Work Out by J Cole',
+//        'California Love by Tupac',
+//        "Gangsta's Paradise by Coolio"
+//      ]
+//    }
+//  ]
+//};
 // example function that maps over the json and writes to the console
+
+
 function writeSampleQuizToConsole() {
   sampleQuiz.questions.map(function(question) {
     console.log(question.questionText);
@@ -150,6 +151,8 @@ document
 // window load event listener
 window.addEventListener('load', function(e) {
   console.log('app loaded');
+  const quizQuestions = GetQuestions();
+  console.log(quizQuestions);
 });
 
 // create account form submit event listener
@@ -165,6 +168,24 @@ document.querySelector('#login-form').addEventListener('submit', function(e) {
 });
 
 // BELOW ARE API UTILITIY TYPE THINGS
+
+function GetQuestions() {
+  var webMethod = 'AccountServices.asmx/GetAllQuestions';
+  $.ajax({
+    type: 'POST',
+    url: webMethod,
+    //data: parameters,
+    contentType: 'application/json; charset=utf-8',
+    dataType: 'json',
+    success: function (msg) {
+      console.log(msg.d);
+      return msg.d;
+    },
+    error: function (e) {
+      alert('Error getting questing from API');
+    }
+  });
+}
 //passes account info to the server, to create an account request
 function CreateAccount(id, pass, fname, lname, email) {
   var webMethod = 'AccountServices.asmx/RequestAccount';
