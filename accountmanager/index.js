@@ -65,6 +65,8 @@
 //};
 // example function that maps over the json and writes to the console
 
+// declare the global quiz questions which are fetched on window load
+let quizQuestions = undefined;
 
 function writeSampleQuizToConsole() {
   sampleQuiz.questions.map(function(question) {
@@ -151,8 +153,7 @@ document
 // window load event listener
 window.addEventListener('load', function(e) {
   console.log('app loaded');
-  const quizQuestions = GetQuestions();
-  console.log(quizQuestions);
+  GetQuestions(); // this fetches all the quiz questions on load
 });
 
 // create account form submit event listener
@@ -179,6 +180,7 @@ function GetQuestions() {
     dataType: 'json',
     success: function (msg) {
       console.log(msg.d);
+      quizQuestions = msg.d;
       return msg.d;
     },
     error: function (e) {
@@ -250,9 +252,10 @@ function LogOn(userId, pass) {
       //to a generic property of the server response called d (I assume short for data
       //but honestly I don't know...)
       if (msg.d) {
-        console.log('suckcess');
-        alert('logon success');
+        console.log(msg.d);
+        alert('logon success - remove for production');
         showPanel('accountSettingsTab');
+        quizQuestions = msg.d;
       } else {
         //server replied false, so let the user know
         //the logon failed
