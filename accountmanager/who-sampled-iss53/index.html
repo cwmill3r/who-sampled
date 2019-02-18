@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100%">
+  <title>Who Sampled?</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Montserrat"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  />
+  <style>
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: 'Lato', sans-serif;
+    }
+    .w3-bar,
+    h1,
+    button {
+      font-family: 'Montserrat', sans-serif;
+    }
+    .fa-anchor,
+    .fa-coffee {
+      font-size: 200px;
+    }
+    .buttonContainer{
+      position: relative;
+      width: 100%;
+    }
+    /* Style the button and place it in the middle of the container/image */
+    .buttonContainer #playBtn{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      font-size: 16px;
+      padding: 12px 24px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+/*Question page is the container of the quiz tab, where we'll update all the information on it as the user clicks submit*/
+#questionPage{
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 4px solid rgba(0, 0, 0, 0.2);
+  outline: 3px solid rgba(255, 255, 255, 0.3);
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+margin-top: 56px;
+}
+
+#questionHeaderText{
+  display: block;
+  overflow: hidden;
+}
+
+#videoPane{
+      padding: 0% 20%;
+    }
+
+#videoPane, #videoiFrame{
+      height: 40vh;
+}
+
+    #triviaQuestions{
+          padding: 10px;        
+        }
+
+    #questionButtonsBox{          
+      width: 80%;
+    margin: 0% 10%;
+     }
+
+    #questionColumnContainer
+    {
+      display:flex;
+    }
+    #triviaQuestions #answerBtn{
+      display: block;
+      width:40%;
+      padding: 8px;
+      margin: 2%;
+      margin-left: auto; margin-right: auto;
+
+      border-width: 4px;
+      border-radius: 8px;
+    }
+
+    #triviaQuestions #answerBtn:hover{
+      background-color: grey;
+      color: white
+    }
+    #playBtn{
+      background-color: Transparent;
+      background-repeat:no-repeat;
+      border: none;
+      cursor:pointer;
+      overflow: hidden; 
+      text-transform: uppercase;
+      font-weight:bold;
+    }
+
+    #submitButton{
+      clear:left;
+    }
+  
+  </style>
+  <body style="height:100%">
+    <!-- Navbar -->
+    <div class="w3-top ">
+      <div class="w3-bar w3-indigo w3-card w3-left-align w3-large">
+        <a
+          class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large"
+          href="javascript:void(0);"
+          onclick="myFunction()"
+          title="Toggle Navigation Menu"
+        >
+          <i class="fa fa-bars"></i>
+        </a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white">
+          Home               </a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">
+          About              </a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">
+          Account Settings   </a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">
+          Add Question       </a>
+         
+      </div>
+      <!-- End of fullscreen Navbar -->
+
+      <!-- Navbar on small screens -->
+      <div
+        id="navDemo"
+        class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large"
+      >
+        <a href="#" class="w3-bar-item w3-button w3-padding-large">About</a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large">
+          Account Settings
+        </a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large">
+          Add Question
+        </a>
+      </div>
+
+    </div>
+ <!-- End of navbar on small screens -->
+
+    <div class="w3-display-container w3-light-blue w3-bar-block" style="height:100%; ">
+
+    <!-- Landing Page Div -->
+      <div class="w3-display-middle w3-center w3-light-blue w3-hide" >
+        <h1 class="w3-margin w3-text-indigo w3-jumbo">Who Sampled?</h1>
+        <p class="w3-large w3-text-indigo">
+          Test your knowledge of hip-hop production!
+        </p>
+        <div class = "buttonContainer">
+        <button id = "playBtn" style = "font-size: 35px; height: 100%;">
+          Play Game    </button>
+         <img src ="GoldRecord.png" alt = "Record" style = "width:250px;height:250px">
+       </div>
+      </div>
+    <!-- End of Landing Page Div -->
+
+
+
+<!-- Question page Div -->
+    <div id="questionPage" class="w3-display-container w3-display-topmiddle w3-center  ">
+
+          <div id="videoPane" class="w3-cell-row ">
+          <iframe id="videoiFrame" class="w3-container w3-cell-row w3-mobile" src="https://www.youtube.com/embed/6u5a7_-a3vM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen ></iframe>
+          </div>
+
+          <div id="triviaQuestions" class = "w3-container w3-cell-row w3-mobile " >
+          <h3 id="questionHeaderText" class="w3-cell"style="font-weight: bold;" >Question 1 of 10:</h3>
+            <h2 ">What song did they sample from?</h2>
+            <div id="questionButtonsBox">
+            <div id="questionColumnContainer" class="w3-container">
+            <button id = answerBtn>Sample 1</button>
+            <button id = answerBtn>Sample 2</button>
+          </div>
+
+            <div id="questionColumnContainer" class="w3-container">
+            <button id = answerBtn>Sample 3</button>
+            <button id = answerBtn>Sample 4</button>
+          </div> 
+            <button class="w3-button w3-indigo w3-padding-large w3-large w3-margin-top " id = "submitButton">
+            Submit</button>
+          </div>
+
+        </div>
+
+    </div>
+<!--     End of Question page Div -->
+
+
+</div>
+
+
+    </div>
+
+
+
+    <script>
+      // Used to toggle the menu on small screens when clicking on the menu button
+      function myFunction() {
+        var x = document.getElementById('navDemo');
+        if (x.className.indexOf('w3-show') == -1) {
+          x.className += ' w3-show';
+        } else {
+          x.className = x.className.replace(' w3-show', '');
+        }
+      }
+    </script>
+  </body>
+</html>
