@@ -279,12 +279,19 @@ function renderQuestions() {
 function handlePlayButtonClick(e) {
   e.preventDefault()
   disableNavLinks()
-  showPanel('quizTab');
+  
   GetQuestions();
   if (quizQuestions != undefined) {
     renderQuestions();
+    showPanel('quizTab');
+
   } else {
+    alert('Loading API... hit refresh if no response');
     GetQuestions();
+    setTimeout(function () {
+      renderQuestions();
+      showPanel('quizTab');
+    }, 1000)
   }
 }
 
@@ -367,21 +374,23 @@ function clearScoreCard() {
 }
 
 function renderFinalScoreCard() {
-  //document.querySelector('#finalScoreGoesHere').innerHTML = calculateScore();
-  const finalScoreTab = document.querySelector('#finalScoreTab');
-  finalScoreTab.style.display = 'block';
-  finalScoreTab.style.height = '100vh';
-  finalScoreTab.style.width = '100vw';
-  finalScoreTab.style.paddingTop = '0';
-  const finalScoreCard = document.querySelector('#finalScoreCard');
-  //finalScoreCard.style.paddingTop = '0';
-  finalScoreCard.style.height = '100vh';
-  finalScoreCard.style.width = '100vw';
-  finalScoreCard.style.backgroundColor = 'black';
-  finalScoreCard.style.color = 'pink';
-  const finalScoreMessage = document.querySelector('#finalScoreMessage');
-  finalScoreMessage.innerHTML =
-    `Thanks for playing WHO SAMPLED...` + `Your score is ${calculateScore()}`;
+  setTimeout(function () {
+    //document.querySelector('#finalScoreGoesHere').innerHTML = calculateScore();
+    const finalScoreTab = document.querySelector('#finalScoreTab');
+    finalScoreTab.style.display = 'block';
+    finalScoreTab.style.height = '100vh';
+    finalScoreTab.style.width = '100vw';
+    finalScoreTab.style.paddingTop = '0';
+    const finalScoreCard = document.querySelector('#finalScoreCard');
+    //finalScoreCard.style.paddingTop = '0';
+    finalScoreCard.style.height = '100vh';
+    finalScoreCard.style.width = '100vw';
+    finalScoreCard.style.backgroundColor = 'black';
+    finalScoreCard.style.color = 'pink';
+    const finalScoreMessage = document.querySelector('#finalScoreMessage');
+    finalScoreMessage.innerHTML =
+      `Thanks for playing WHO SAMPLED...` + `Your score is ${calculateScore()}`;
+  }, 1000)
 };
 
 function calculateScore() {
