@@ -1,82 +1,25 @@
-//const sampleQuiz = {
-//  quizId: 0,
-//  questions: [
-//    {
-//      questionId: 0,
-//      creatorId: 7,
-//      questionText: 'who sampled?',
-//      videoId: 'cFU-FJzPE80',
-//      correctAnswerText: 'Hotline Bling by Drake',
-//      wrongAnswers: [
-//        'Work Out by J Cole',
-//        'California Love by Tupac',
-//        "Gangsta's Paradise by Coolio"
-//      ]
-//    },
-//    {
-//      questionId: 1,
-//      creatorId: 7,
-//      videoId: 'rMB-wx7LmdQ',
-//      questionText: 'who sampled?',
-//      correctAnswerText: 'Mask Off by Future',
-//      wrongAnsAnwers: [
-//        'Work Out by J Cole',
-//        'California Love by Tupac',
-//        "Gangsta's Paradise by Coolio"
-//      ]
-//    },
-//    {
-//      questionId: 2,
-//      creatorId: 7,
-//      videoId: 'xKISdd2mKzU',
-//      questionText: 'who sampled?',
-//      correctAnswerText: 'My Name Is by Eminem',
-//      wrongAnswers: [
-//        'Work Out by J Cole',
-//        'California Love by Tupac',
-//        "Gangsta's Paradise by Coolio"
-//      ]
-//    },
-//    {
-//      questionId: 3,
-//      creatorId: 7,
-//      videoId: 'zY0--b6DLqQ',
-//      questionText: 'who sampled?',
-//      correctAnswerText: 'Regulate by Warren G',
-//      wrongAnswers: [
-//        'Work Out by J Cole',
-//        'California Love by Tupac',
-//        "Gangsta's Paradise by Coolio"
-//      ]
-//    },
-//    {
-//      questionId: 4,
-//      creatorId: 7,
-//      videoId: 'Mrd14PxaUco',
-//      questionText: 'who sampled?',
-//      correctAnswerText: 'Gold Digger by Kanye West',
-//      wrongAnswers: [
-//        'Work Out by J Cole',
-//        'California Love by Tupac',
-//        "Gangsta's Paradise by Coolio"
-//      ]
-//    }
-//  ]
-//};
-// example function that maps over the json and writes to the console
+// WHO SAMPLED is a JS and C# web app which allows users
+// to submit quiz questions and allows them to play a quiz
+// testing their knowledge of HipHop samples
 
-// declare the global quiz questions which are fetched on window load
+// Below there are rougly 3 secions of code
+// 1. functions to render content and handle button clicks and form submits i.e. handleClick() and renderSection()
+// 2. Utility functions which call the web services
+// 3. event listeners to trigger the methods named handle*Whatever*
+
+// This project must be run in Visual Studio to take advantage of the Services we wrote in C#
+// It utilizes a MySql db that is currently hosted on Plesk
+
+// GLOBAL Variables
 let quizQuestions = undefined;
+let userInfo = undefined;
+let userQuestions = undefined;
+let questionCounter = undefined;
 
-function writeSampleQuizToConsole() {
-  sampleQuiz.questions.map(function(question) {
-    console.log(question.questionText);
-    console.log(question.correctAns);
-    question.wrongAnsArr.map(function(answ) {
-      console.log(answ);
-    });
-  });
-}
+// quiz global variables ... remember to clear them when the quiz is finished
+let quizPanels = []; // this is for hiding and showing :(
+let totalQuizQuestions = undefined;
+let rightAnswers = undefined;
 
 // content panels used in hiding showing
 const contentPanels = [
@@ -85,9 +28,15 @@ const contentPanels = [
   'accountTab',
   'addQuestionTab',
   'accountSettingsTab',
-  'createAccountTab'
+  'createAccountTab',
+  'createQuestionTab',
+  'quizTab',
+  'editQuestionTab',
+  'finalScoreTab' 
 ];
 
+// There are also panels for the quiz found below
+ 
 // magic show panel function
 function showPanel(panelId) {
   for (var i = 0; i < contentPanels.length; i++) {
@@ -99,15 +48,32 @@ function showPanel(panelId) {
   }
 }
 
+// magic show panel function for the quiz questions
+function showQuizPanel(panelId) {
+  // let the parent container show
+  for (var i = 0; i < quizPanels.length; i++) {
+    if (panelId == quizPanels[i]) {
+      $('#' + quizPanels[i]).css('visibility', 'visible');
+    } else {
+      $('#' + quizPanels[i]).css('visibility', 'hidden');
+    }
+  }
+  // keep the parent showing visible
+  document.querySelector('#quizTab').style.visibility = "visible";
+}
+
 // login form submit handler
 function handleLoginFormSubmit(e) {
   e.preventDefault();
   const id = document.querySelector('#logonId').value;
-  console.log(id);
   const pass = document.querySelector('#logonPassword').value;
-  console.log(pass);
   LogOn(id, pass);
   return false;
+}
+
+function clearLogOnForm() {
+  document.querySelector('#logonId').value = "";
+  document.querySelector('#logonPassword').value = "";
 }
 
 // create account form submit handler
@@ -121,55 +87,344 @@ function handleCreateAccountFormSubmit(e) {
   // actually create the account
   CreateAccount(username, password, firstname, lastname, email);
 }
+ 
+function renderAccountSettingsPage(userInfo) {
+  // render the heading and greeting of the account settings page
+  document.querySelector('#accountSettingsTab').innerHTML = `
+  <div class="w3-container">
+    <img src="http://i.pravatar.cc/300" class="w3-bar-item w3-circle w3-hide-small" style="width:85px">
+    <h3 class="w3-text-teal">hello ${userInfo.userId}</h3>
+    <a style="text-decoration: underline; cursor: pointer;" class="w3-text-indigo" onClick="handleLogoffClick()" id="logoff-button">Logoff</a>
+    <div class="w3-right">
+      <button onclick="handleCreateQuestionClick(this)" id="createQuestionButton">create new question</button>
+    </div>
+  </div>
+  <div class="w3-container">
+    <div class="w3-section">
+      <ul id="userQuestionsList" class="w3-ul w3-card-4 w3-white"></ul>
+    </div>
+  </div>
+  </br>
+`
+  // render the questions that the user created
+  GetUserCreatedQuestions(userInfo.id); 
+}
 
-// create account event listener
-document
-  .querySelector('#create-account-link')
-  .addEventListener('click', function(e) {
-    e.preventDefault();
-    showPanel('createAccountTab');
+// this renders the questions that a user created
+function renderUserCreatedQuestions(userQuestions) {
+  document.querySelector('#accountSettingsTab').innerHTML += `
+  <div id="editQuestionsContainer">
+    <ul id="userQuestionsList" class="w3-ul w3-card-4"></ul>
+  </div>
+  `
+  document.querySelector('#userQuestionsList').innerHTML = "";
+  // Could do some cooler stuff here but right now it's fairly basic
+  userQuestions.map(function (question, index) {
+    console.log(question);
+    document.querySelector('#userQuestionsList').innerHTML += `
+      <li class="w3-bar">
+        <span data-questionId=${question.questionId} onclick="handleDeleteQuestionClick(this)" class="questionDeleteButton w3-bar-item w3-button w3-xlarge w3-right">
+          <i data-questionId=${question.questionId} class="questionDeleteButton fa fa-times" aria-hidden="true"></i>
+          <p data-questionId=${question.questionId} class="questionDeleteButton w3-small">delete</p>
+        </span>
+        <span data-questionId=${question.questionId} onclick="handleEditQuestionClick(this)" class="questionEditButton w3-bar-item w3-button w3-xlarge w3-right">
+          <i data-questionId=${question.questionId} onclick="handleEditQuestionClick(this)" class="fa fa-pencil" aria-hidden="true"></i>
+          <p data-questionId=${question.questionId} onclick="handleEditQuestionClick(this)" class="w3-small">edit</p>
+        </span>
+   
+        <div class="w3-bar-item">
+          <iframe src="${question.videoId}"></iframe>
+          <span class="w3-large w3-text-grey"> ... sampled on ${question.correctAnswerText}</span><br>
+        </div>
+      </li>
+    `
   });
+}
 
-// logoff button event listener
-document.querySelector('#logoff-button').addEventListener('click', function(e) {
+function handleCreateQuestionClick(e) {
+  //clear the questions list
+  document.querySelector('#userQuestionsList').innerHTML = "";
+  showPanel('createQuestionTab');
+}
+
+function handleDeleteQuestionClick(e) {
+  const questionId = e.getAttribute("data-questionId");
+  console.log(`questionId is ${questionId}`);
+  DeleteQuestion(questionId);
+}
+
+function handleEditQuestionClick(event) { 
+  const questionId = event.getAttribute("data-questionId");
+  // first we render the form filled with that questions stuff
+  renderEditQuestionForm(questionId);
+}
+
+function handleEditQuestionFormSubmit(e) {
   e.preventDefault();
+  const questionId = document.querySelector('#eq-questionId').value;
+  const questionText = document.querySelector('#eq-questionText').value;
+  const sampleYouTubeLink = document.querySelector('#eq-sampleYouTubeLink').value;
+  const correctAnswerText = document.querySelector('#eq-correctAnswerText').value;
+  const wrongAnswer1 = document.querySelector('#eq-wrongAnswer1').value;
+  const wrongAnswer2 = document.querySelector('#eq-wrongAnswer2').value;
+  const wrongAnswer3 = document.querySelector('#eq-wrongAnswer3').value;
+  EditQuestion(questionId, questionText, sampleYouTubeLink, correctAnswerText, wrongAnswer1, wrongAnswer2, wrongAnswer3);
+  document.querySelector('#editQuestionTab').innerHTML = "";
+}
+
+function renderEditQuestionForm(questionId) {
+  showPanel('editQuestionTab');
+  console.log(userQuestions);
+  console.log(questionId);
+
+  // if anyone is reading this I am proud of this little function chain ;)
+  userQuestions.filter(function (q) {
+    console.log(q);
+    return q.questionId == questionId;
+  }).map(function (q) {
+    document.querySelector('#eq-questionText').value = q.questionText;
+    document.querySelector('#eq-sampleYouTubeLink').value = q.videoId;
+    document.querySelector('#eq-correctAnswerText').value = q.correctAnswerText;
+    document.querySelector('#eq-questionId').value = q.questionId; // written to the hidden input
+    q.wrongAnswers.map(function (w, index) {
+      document.querySelector(`#eq-wrongAnswer${index+1}`).value = w.wrongAnswerText;
+    })
+  });
+  
+}
+
+function handleLogoffClick() {
   LogOff();
-});
+  document.querySelector('#accountSettingsTab').innerHTML = "";
+}
 
-// hometab event listener
-document.querySelector('#home-tab-link').addEventListener('click', function(e) {
+function handleCreateQuestionFormSubmit(e) {
   e.preventDefault();
-  showPanel('homeTab');
-});
+  console.log(userInfo.id);
+  const creatorIdToPass = userInfo.id;
+  const questionText = document.querySelector('#cq-questionText').value;
+  const sampleTrackName = document.querySelector('#cq-sampleTrackName').value;
+  const sampleArtistName = document.querySelector('#cq-sampleArtistName').value;
+  const sampleYouTubeLink = document.querySelector('#cq-sampleYouTubeLink').value;
+  const songArtistName = document.querySelector('#cq-songArtistName').value;
+  const songTitle = document.querySelector('#cq-songTitle').value;
+  const wrongAnswer1 = document.querySelector('#cq-wrongAnswer1').value;
+  const wrongAnswer2 = document.querySelector('#cq-wrongAnswer2').value;
+  const wrongAnswer3 = document.querySelector('#cq-wrongAnswer3').value;
+  //alert('form about to be submitted');
+  // actually create the account
+  console.log(creatorIdToPass + " " + questionText + " " + sampleTrackName + " " + sampleArtistName + " " + sampleYouTubeLink + " " + songArtistName + " " + songTitle + " " + wrongAnswer1 + " " + wrongAnswer2 + " " + wrongAnswer3)
+  CreateQuestion(creatorIdToPass, questionText, sampleTrackName, sampleArtistName, sampleYouTubeLink, songArtistName, songTitle, wrongAnswer1, wrongAnswer2, wrongAnswer3);
+}
 
-// account link click event listener
-document
-  .querySelector('#account-tab-link')
-  .addEventListener('click', function(e) {
-    e.preventDefault();
-    showPanel('accountTab');
+// this function is kind of complicated but it maps over the quizQuestions and their wrong answers
+// it creates an array of their buttons which are the answer choices and finally...
+// it shuffles them for each question giving an element of randomness
+function renderQuestions() {
+  // let the global quizQuestions variable know how many questions in THIS quiz
+  totalQuizQuestions = quizQuestions.length;
+  // the first time through right answers is undefined so we set it to zero
+  // right answers are added in the right and wrong answers click event listeners
+  rightAnswers = 0;
+  questionCounter = 0;
+  const quizDiv = document.querySelector('#quizTab');
+  quizQuestions.map(function (q, index) {
+    quizPanels.push(`quizPanel-${index}`);
+      quizDiv.innerHTML += `
+        <div class="w3-container w3-display-middle w3-twothird w3-card w3-padding-large w3-white" style="visibility: hidden;" id="quizPanel-${index}">
+          <h3>
+            Question ${index + 1} of ${quizQuestions.length}
+          </h3>
+          <div id="videoPane">
+            <iframe style="width:100%; height:100%; min-height: 16vw;" id="videoiFrame${index}" class="" src="${q.videoId}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
+          </div>     
+          <h1 class="w3-center">
+            <b>${q.questionText}</b>
+          </h1>
+          <div id="buttonDiv-${q.questionId}">
+            <!-- Buttons Render Here-->
+          </div>
+        </div>
+      `
+    
+    let answerArray = [];
+    answerArray.push(
+      `<button style="font-size: 2vw; display:inline-block; width: 100%; margin-top: 1rem;" class="w3-button w3-teal w3-center" onclick="handleRightAnswerClick(this)" data-quizPanel="quizPanel-${index}" id="${q.questionid}">${q.correctAnswerText}</button>`
+    );
+
+    q.wrongAnswers.map(function (w) {
+      answerArray.push(`<button style="font-size: 2vw; display:inline-block; width: 100%; margin-top: 1rem;" class="w3-button w3-teal w3-center" onclick="handleWrongAnswerClick(this)" data-quizPanel="quizPanel-${index}" id="${w.questionId}">${w.wrongAnswerText}</button>`);
+    });
+    let shuffledArray = shuffle(answerArray);
+
+    let specificButtonDiv = document.querySelector(`#buttonDiv-${q.questionId}`)
+
+    shuffledArray.map(function (a) {
+      specificButtonDiv.innerHTML += `
+        ${a}
+      `
+    });
+
   });
 
-// window load event listener
-window.addEventListener('load', function(e) {
-  console.log('app loaded');
-  GetQuestions(); // this fetches all the quiz questions on load
-});
+  quizPanels.map(function (q) { console.log(q) });
+  // show the first question
+  console.log(quizPanels[0]);
+  showQuizPanel("quizPanel-0");
+  // start the first video playing
+  //playVideoFunction('videoiFrame-0');
+}
 
-// create account form submit event listener
-document
-  .querySelector('#create-account-form')
-  .addEventListener('submit', function(e) {
-    handleCreateAccountFormSubmit(e);
-  });
+// this is the main play button on the homepage
+function handlePlayButtonClick(e) {
+  e.preventDefault()
+  disableNavLinks()
+  showPanel('quizTab');
+  GetQuestions();
+  if (quizQuestions != undefined) {
+    renderQuestions();
+  } else {
+    GetQuestions();
+  }
+}
 
-// login form submit event listener
-document.querySelector('#login-form').addEventListener('submit', function(e) {
-  handleLoginFormSubmit(e);
-});
+function disableNavLinks() {
+  const homeTabLink = document.querySelector('#home-tab-link');
+  homeTabLink.disabled = true;
+  homeTabLink.innerHTML = "";
+  const accountTabLink = document.querySelector('#account-tab-link');
+  accountTabLink.disabled = true;
+  accountTabLink.innerHTML = "";
+}
+
+function enableNavLinks() {
+  const homeTabLink = document.querySelector('#home-tab-link');
+  homeTabLink.disabled = false;
+  homeTabLink.innerHTML = "Home";
+  const accountTabLink = document.querySelector('#account-tab-link');
+  accountTabLink.disabled = false;
+  accountTabLink.innerHTML = "Account";
+}
+
+// this and handleWrongAnswerClick could be combined
+// but were just doing it this way at first for simplicity
+function handleRightAnswerClick(event) {
+  if (questionCounter + 1 < totalQuizQuestions) {
+    const quizPanelId = event.getAttribute("data-quizpanel");
+    //alert('A right answer was clicked so im adding 1 to rightAnswers');
+    rightAnswers++;
+    questionCounter++;
+    // get index of the quizPanel that was clicked
+    const indexOfPanelClicked = quizPanels.indexOf(quizPanelId);
+    const nextPanel = quizPanels[indexOfPanelClicked + 1];
+    // pause the playing video if playing
+    stopVideoFunction();
+    showQuizPanel(nextPanel);
+  } else {
+    document.querySelector('#quizTab').innerHTML = "";
+    //alert('were gonna show the final score here')
+    // calculate the score as a percent and display
+    renderFinalScoreCard();
+    showPanel('finalScoreTab');
+    clearScoreCard();
+    enableNavLinks();
+  };
+  
+}
+
+function handleWrongAnswerClick(event) {
+  if (questionCounter + 1 < totalQuizQuestions) {
+    //alert(questionCounter);
+    // keep playing - not last question
+    //alert('were gonna keep playing');
+    const quizPanelId = event.getAttribute("data-quizpanel");
+    //alert('A wrong answer was clicked so im not adding to rightAnswers');
+    questionCounter++;
+    stopVideoFunction();
+    // get index of the quizPanel that was clicked
+    const indexOfPanelClicked = quizPanels.indexOf(quizPanelId);
+    const nextPanel = quizPanels[indexOfPanelClicked + 1];
+    showQuizPanel(nextPanel);
+  } else {
+    document.querySelector('#quizTab').innerHTML = "";
+    //alert('were gonna show the final score here');
+    // calculate the score as a percent and display
+    renderFinalScoreCard();
+    showPanel('finalScoreTab');
+    clearScoreCard();
+    enableNavLinks();
+  }
+}
+
+// clears the final score card after 5 seconds 5000 ms
+function clearScoreCard() {
+  setTimeout(function () {
+    const finalScoreTab = document.querySelector('#finalScoreTab');
+    finalScoreTab.innerHTML = "";
+    showPanel('homeTab');
+  }, 5000)
+
+}
+
+function renderFinalScoreCard() {
+  //document.querySelector('#finalScoreGoesHere').innerHTML = calculateScore();
+  const finalScoreTab = document.querySelector('#finalScoreTab');
+  finalScoreTab.style.display = 'block';
+  finalScoreTab.style.height = '100vh';
+  finalScoreTab.style.width = '100vw';
+  finalScoreTab.style.paddingTop = '0';
+  const finalScoreCard = document.querySelector('#finalScoreCard');
+  //finalScoreCard.style.paddingTop = '0';
+  finalScoreCard.style.height = '100vh';
+  finalScoreCard.style.width = '100vw';
+  finalScoreCard.style.backgroundColor = 'black';
+  finalScoreCard.style.color = 'pink';
+  const finalScoreMessage = document.querySelector('#finalScoreMessage');
+  finalScoreMessage.innerHTML =
+    `Thanks for playing WHO SAMPLED...` + `Your score is ${calculateScore()}`;
+};
+
+function calculateScore() {
+  const finalPercent = rightAnswers / totalQuizQuestions;
+  return finalPercent.toLocaleString('en', { style: "percent" });
+}
+
+function playVideoFunction(id) {
+  document.getElementById(id).src += "&autoplay=1";
+}
+
+function stopVideoFunction() {
+  var videoText = "videoiFrame" + (questionCounter - 1).toString();
+  console.log(videoText)
+  var ysrc = document.getElementById(videoText).src;
+
+  var newsrc = ysrc.replace("&autoplay=1", "");
+  document.getElementById(videoText).src = newsrc;
+}
+
+// Fisher-Yates shuffle algorithm https://github.com/coolaj86/knuth-shuffle
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
 
 // BELOW ARE API UTILITIY TYPE THINGS
 
+// Utilizes the GetQuestions C# Web Service
 function GetQuestions() {
   var webMethod = 'AccountServices.asmx/GetAllQuestions';
   $.ajax({
@@ -188,7 +443,52 @@ function GetQuestions() {
     }
   });
 }
-//passes account info to the server, to create an account request
+
+// Utilizes the GetUserCreatedQuestions C# Web Service
+function GetUserCreatedQuestions(id) {
+  var webMethod = 'AccountServices.asmx/GetUserCreatedQuestions';
+  var parameters = `{ id : ${encodeURI(id)}}`;
+  $.ajax({
+    type: 'POST',
+    url: webMethod,
+    data: parameters,
+    contentType: 'application/json; charset=utf-8',
+    dataType: 'json',
+    success: function (msg) {
+      console.log(msg.d);
+      userQuestions = msg.d;
+      renderUserCreatedQuestions(msg.d);
+    },
+    error: function (e) {
+      alert('Error getting users questions from API');
+    }
+  });
+}
+
+// Utilizes the DeleteQuestion C# Web Service
+function DeleteQuestion(questionid) {
+  var webMethod = 'AccountServices.asmx/DeleteQuestion';
+  var parameters = `{ "questionid" : ${encodeURI(questionid)}}`;
+  console.log(parameters);
+  $.ajax({
+    type: 'POST',
+    url: webMethod,
+    data: parameters,
+    contentType: 'application/json; charset=utf-8',
+    dataType: 'json',
+    success: function (msg) {
+      console.log(msg.d);
+      renderAccountSettingsPage(userInfo);
+      renderUserCreatedQuestions(userQuestions);
+      return msg.d;
+    },
+    error: function (e) {
+      alert('Error deleting question');
+    }
+  });
+}
+
+// Utilizes the CreateQuestion C# Web Service
 function CreateAccount(id, pass, fname, lname, email) {
   var webMethod = 'AccountServices.asmx/RequestAccount';
   var parameters =
@@ -212,7 +512,7 @@ function CreateAccount(id, pass, fname, lname, email) {
     dataType: 'json',
     success: function(msg) {
       showPanel('accountTab');
-      alert('Account request pending approval...');
+      alert('Congrats your accout was approved LOG IN WITH YOUR NEW CREDENTIALS :)');
     },
     error: function(e) {
       alert('boo...');
@@ -220,54 +520,103 @@ function CreateAccount(id, pass, fname, lname, email) {
   });
 }
 
-//HERE'S AN EXAMPLE OF AN AJAX CALL WITH JQUERY!
+// Utilizes the CreateQuestion C# Web Service
+function CreateQuestion(creatorId, questionText, sampleTrackName, sampleArtistName, sampleYouTubeLink, songArtistName, songTitle, wrongAnswer1, wrongAnswer2, wrongAnswer3, wrongAnswer4) {
+  var webMethod = 'AccountServices.asmx/CreateQuestion';
+  var parameters = `{
+    "creatorId": ${encodeURI(creatorId)},
+    "questionText": "${encodeURI(questionText)}",
+    "sampleTrackName" : "${encodeURI(sampleTrackName)}",
+    "sampleArtistName" : "${encodeURI(sampleArtistName)}",
+    "sampleYouTubeLink" : "${encodeURI(sampleYouTubeLink)}",
+    "songArtistName" : "${encodeURI(songArtistName)}",
+    "songTitle" : "${encodeURI(songTitle)}",
+    "wrongAnswer1" : "${encodeURI(wrongAnswer1)}",
+    "wrongAnswer2" : "${encodeURI(wrongAnswer2)}",
+    "wrongAnswer3" : "${encodeURI(wrongAnswer3)}"
+  }`;
+  console.log(parameters);  
+  $.ajax({
+    type: 'POST',
+    url: webMethod,
+    data: parameters,
+    contentType: 'application/json; charset=utf-8',
+    dataType: 'json',
+    success: function (msg) {
+      alert('Congrats your question was approved...');
+      document.querySelector('#accountSettingsTab').innerHTML = "";
+      showPanel('accountSettingsTab');
+      renderAccountSettingsPage(userInfo);
+      renderUserCreatedQuestions(userQuestions);
+    },
+    error: function (e) {
+      alert('boo...');
+    }
+  });
+}
+
+// Utilizes the EditQuestion C# Web Service
+function EditQuestion(questionId, questionText, sampleYouTubeLink, correctAnswerText, wrongAnswer1, wrongAnswer2, wrongAnswer3) {
+  var webMethod = 'AccountServices.asmx/EditQuestion';
+  var parameters = `{
+    "questionId": ${questionId},
+    "questionText": "${encodeURI(questionText)}",
+    "sampleYouTubeLink" : "${encodeURI(sampleYouTubeLink)}",
+    "correctAnswerText" : "${encodeURI(correctAnswerText)}",
+    "wrongAnswer1" : "${encodeURI(wrongAnswer1)}",
+    "wrongAnswer2" : "${encodeURI(wrongAnswer2)}",
+    "wrongAnswer3" : "${encodeURI(wrongAnswer3)}"
+  }`;
+  console.log(parameters);
+  $.ajax({
+    type: 'POST',
+    url: webMethod,
+    data: parameters,
+    contentType: 'application/json; charset=utf-8',
+    dataType: 'json',
+    success: function (msg) {
+      // clear some old stuff out to make room...
+      //document.querySelector('#accountSettingsTab').innerHTML = "";
+      document.querySelector('#userQuestionsList').innerHTML = "";
+      // render the new page with the edited question
+      renderAccountSettingsPage(userInfo);
+      renderUserCreatedQuestions(userQuestions);
+      showPanel('accountSettingsTab');
+    },
+    error: function (e) {
+      alert('boo...');
+    }
+  });
+}
+
+// Utilizes the LogOn C# Web Service
 function LogOn(userId, pass) {
-  //the url of the webservice we will be talking to
-  var webMethod = 'http://localhost:50406/AccountServices.asmx/LogOn';
-  //the parameters we will pass the service (in json format because curly braces)
-  //note we encode the values for transmission over the web.  All the \'s are just
-  //because we want to wrap our keynames and values in double quotes so we have to
-  //escape the double quotes (because the overall string we're creating is in double quotes!)
+  var webMethod = 'AccountServices.asmx/LogOn';
   var parameters =
     '{"uid":"' + encodeURI(userId) + '","pass":"' + encodeURI(pass) + '"}';
 
-  //jQuery ajax method
   $.ajax({
-    //post is more secure than get, and allows
-    //us to send big data if we want.  really just
-    //depends on the way the service you're talking to is set up, though
     type: 'POST',
-    //the url is set to the string we created above
     url: webMethod,
-    //same with the data
     data: parameters,
-    //these next two key/value pairs say we intend to talk in JSON format
     contentType: 'application/json; charset=utf-8',
     dataType: 'json',
-    //jQuery sends the data and asynchronously waits for a response.  when it
-    //gets a response, it calls the function mapped to the success key here
     success: function(msg) {
-      //the server response is in the msg object passed in to the function here
-      //since our logon web method simply returns a true/false, that value is mapped
-      //to a generic property of the server response called d (I assume short for data
-      //but honestly I don't know...)
-      if (msg.d) {
-        console.log(msg.d);
-        alert('logon success - remove for production');
+      if (msg.d.loggedIn) {
         showPanel('accountSettingsTab');
-        quizQuestions = msg.d;
+        userInfo = msg.d;
+        console.log(userInfo); // remove for production
+        clearLogOnForm();
+        renderAccountSettingsPage(userInfo);
+        return true;
       } else {
         //server replied false, so let the user know
         //the logon failed
         alert('logon failed');
+        return false;
       }
     },
     error: function(e) {
-      //if something goes wrong in the mechanics of delivering the
-      //message to the server or the server processing that message,
-      //then this function mapped to the error key is executed rather
-      //than the one mapped to the success key.  This is just a garbage
-      //alert becaue I'm lazy
       alert('boo...');
     }
   });
@@ -283,12 +632,8 @@ function LogOff() {
     dataType: 'json',
     success: function(msg) {
       if (msg.d) {
-        //we logged off, so go back to logon page,
-        //stop checking messages
-        //and clear the chat panel
-        alert('sucessful logoff');
         showPanel('accountTab');
-        //HideMenu();
+        userInfo = undefined;
       } else {
         alert('something went wrong with log off');
       }
@@ -298,3 +643,74 @@ function LogOff() {
     }
   });
 }
+
+// EVENT LISTENER SECTION
+
+// quiz button click event listener
+document.querySelector('#playButton').addEventListener('click', function (e) {
+  handlePlayButtonClick(e);
+})
+
+// edit question submit event listener
+document.querySelector('#editQuestionForm').addEventListener('submit', function (e) {
+  handleEditQuestionFormSubmit(e);
+});
+
+// create question submit event listener
+document.querySelector('#create-question-form').addEventListener('submit', function (e) {
+  console.log(e);
+  handleCreateQuestionFormSubmit(e);
+});
+
+// create account event listener
+document
+  .querySelector('#create-account-link')
+  .addEventListener('click', function (e) {
+    e.preventDefault();
+    showPanel('createAccountTab');
+  });
+
+//// logoff button event listener
+//document.querySelector('#logoff-button').addEventListener('click', function (e) {
+//  e.preventDefault();
+//  LogOff();
+//});
+
+// hometab event listener
+document.querySelector('#home-tab-link').addEventListener('click', function (e) {
+  e.preventDefault();
+  showPanel('homeTab');
+});
+
+// account tab click event listener
+document
+  .querySelector('#account-tab-link')
+  .addEventListener('click', function (e) {
+    e.preventDefault();
+    //showPanel('accountTab');
+    if (userInfo == undefined) {
+      document.querySelector('#accountSettingsTab').innerHTML = "";
+      showPanel('accountTab');
+    } else if (userInfo.loggedIn) {
+      showPanel('accountSettingsTab');
+    }
+
+  });
+
+// window load event listener
+window.addEventListener('load', function (e) {
+  console.log('app loaded');
+  GetQuestions(); // this fetches all the quiz questions on load
+});
+
+// create account form submit event listener
+document
+  .querySelector('#create-account-form')
+  .addEventListener('submit', function (e) {
+    handleCreateAccountFormSubmit(e);
+  });
+
+// login form submit event listener
+document.querySelector('#login-form').addEventListener('submit', function (e) {
+  handleLoginFormSubmit(e);
+});

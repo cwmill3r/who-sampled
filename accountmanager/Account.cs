@@ -9,6 +9,8 @@ namespace accountmanager
     {
         // just a container for info related to account
         public int id;
+        public bool loggedIn = false;
+        public int admin = 0;
         public string userId;
         public string password;
         public string firstName;

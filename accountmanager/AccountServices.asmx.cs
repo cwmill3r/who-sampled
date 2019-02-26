@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
+using System.Web.Script.Serialization;
 
 //we need these to talk to mysql
 using MySql.Data;
@@ -16,7 +17,7 @@ namespace accountmanager
     /// Summary description for AccountServices
     /// </summary>
     [WebService(Namespace = "http://tempuri.org/")]
-    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)] 
     [System.ComponentModel.ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
     [System.Web.Script.Services.ScriptService]
@@ -25,16 +26,15 @@ namespace accountmanager
 
         //EXAMPLE OF A SIMPLE SELECT QUERY (PARAMETERS PASSED IN FROM CLIENT)
         [WebMethod(EnableSession = true)] //NOTICE: gotta enable session on each individual method
-        public bool LogOn(string uid, string pass)
+        public Account LogOn(string uid, string pass)
         {
-            //we return this flag to tell them if they logged in or not
-            bool success = false;
-
+            // we want to return some account info if they can login
+            Account loginInfo = new Account();
             //our connection string comes from our web.config file like we talked about earlier
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
             //here's our query.  A basic select with nothing fancy.  Note the parameters that begin with @
             //NOTICE: we added admin to what we pull, so that we can store it along with the id in the session
-            string sqlSelect = "SELECT id, admin FROM accounts WHERE userid=@idValue and pass=@passValue";
+            string sqlSelect = "SELECT * FROM accounts WHERE userid=@idValue and pass=@passValue";
 
             //set up our connection object to be ready to use our connection string
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
@@ -63,10 +63,22 @@ namespace accountmanager
                 //are 1) logged in at all, and 2) and admin or not
                 Session["id"] = sqlDt.Rows[0]["id"];
                 Session["admin"] = sqlDt.Rows[0]["admin"];
-                success = true;
+                // make the object we want to return
+                loginInfo.id = Convert.ToInt32(sqlDt.Rows[0]["id"]);
+                loginInfo.admin = Convert.ToInt32(sqlDt.Rows[0]["admin"]);
+                loginInfo.loggedIn = true;
+                loginInfo.userId = sqlDt.Rows[0]["userid"].ToString(); // aka username
+                loginInfo.firstName = sqlDt.Rows[0]["firstname"].ToString();
+                loginInfo.lastName = sqlDt.Rows[0]["lastname"].ToString();
+                loginInfo.email = sqlDt.Rows[0]["email"].ToString();
+                
             }
+            return loginInfo;
             //return the result!
-            return success;
+            //var serializer = new JavaScriptSerializer();
+            //var serializedResult = serializer.Serialize(loginInfo);
+            //return serializedResult;
+
         }
 
         [WebMethod(EnableSession = true)]
@@ -395,7 +407,7 @@ namespace accountmanager
         // combine questions with wrong answers helper function
         public List<Question> CombineQuestions(List<Question> questionList,  List<WrongAnswer> wrongAnswersList)
         {
-            for(int i = 0; i < questionList.Count; i++)
+            for(int i = 0; i < questionList.Count; i++) 
             {
                 int tempId = questionList[i].questionId;
                 Question tmpQuestion = new Question();
@@ -415,5 +427,229 @@ namespace accountmanager
             }
             return questionList;
         }
+        //Service to get the questions a user created by user id
+        [WebMethod(EnableSession = true)]
+        public Question[] GetUserCreatedQuestions(string id)
+        {
+            //LOGIC: get all questions without their answers first
+            DataTable sqlDt = new DataTable("questions");
+
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            //select all the questions *this wont iclude wrong answers*
+            string sqlSelect = "select * from questions where creatorId=@idValue";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+            sqlCommand.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+
+            MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+            sqlDa.Fill(sqlDt);
+
+            DataTable sqlDtWrong = new DataTable("wrongAnswers");
+            // Now add the wrong answers
+            string sqlSelectWrong =
+                "select q.questionId, w.wrongAnswerText from questions q, wrong_answers w where q.questionId = w.questionId";
+
+            MySqlCommand sqlCommandWrong = new MySqlCommand(sqlSelectWrong, sqlConnection);
+            sqlCommandWrong.Parameters.AddWithValue("@idValue", HttpUtility.UrlDecode(id));
+            MySqlDataAdapter sqlDaWrong = new MySqlDataAdapter(sqlCommandWrong);
+            sqlDaWrong.Fill(sqlDtWrong);
+
+            List<Question> tmpQuestions = new List<Question>();
+
+            // get all the questions without the wrong answers
+            for (int i = 0; i < sqlDt.Rows.Count; i++)
+            {
+                tmpQuestions.Add(new Question
+                {
+                    questionId = Convert.ToInt32(sqlDt.Rows[i]["questionId"]),
+                    creatorId = Convert.ToInt32(sqlDt.Rows[i]["creatorId"]),
+                    questionText = sqlDt.Rows[i]["questionText"].ToString(),
+                    videoId = sqlDt.Rows[i]["videoId"].ToString(),
+                    correctAnswerText = sqlDt.Rows[i]["correctAnswerText"].ToString()
+                });
+            }
+            // get all the wrong answers
+            List<WrongAnswer> wrongAnswersList = new List<WrongAnswer>();
+            for (int i = 0; i < sqlDtWrong.Rows.Count; i++)
+            {
+                wrongAnswersList.Add(new WrongAnswer
+                {
+                    questionId = Convert.ToInt32(sqlDtWrong.Rows[i]["questionId"]),
+                    wrongAnswerText = sqlDtWrong.Rows[i]["wrongAnswerText"].ToString()
+                });
+            }
+            // call the helper method to combine
+            List<Question> questionsWithWrongAnswers = CombineQuestions(tmpQuestions, wrongAnswersList);
+
+            // convert do I have to convert these to array or anything?
+            // it seems to be okay with me just returning a C# object
+            return questionsWithWrongAnswers.ToArray();
+        }
+        [WebMethod(EnableSession = true)]
+        public bool DeleteQuestion(int questionid) 
+        {
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            //this is a simple update, with parameters to pass in values
+            string sqlSelect = "DELETE FROM questions WHERE questionid = @questionid;";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@questionid", questionid);
+
+            sqlConnection.Open();
+            try
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            sqlConnection.Close();
+            return true;
+        }
+        //EXAMPLE OF AN INSERT QUERY WITH PARAMS PASSED IN.  BONUS GETTING THE INSERTED ID FROM THE DB!
+        [WebMethod(EnableSession = true)]
+        public int CreateQuestion(int creatorId, string questionText, string sampleTrackName, string sampleArtistName, string sampleYouTubeLink, string songArtistName, string songTitle, string wrongAnswer1, string wrongAnswer2, string wrongAnswer3)
+        {
+            int questionId = -1;
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+            //does is tell mySql server to return the primary key of the last inserted row.
+            string correctAnswerText = $"{songTitle} by {songArtistName}";
+            string sqlSelect = $"insert into questions (creatorId, questionText, videoId, correctAnswerText) values({creatorId}, @questionText, @videoId, @correctAnswerText); SELECT LAST_INSERT_ID();";
+            Console.WriteLine(sqlSelect);
+            // add creatorId
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            //sqlCommand.Parameters.AddWithValue("@creatorId", creatorId);
+            sqlCommand.Parameters.AddWithValue("@questionText", HttpUtility.UrlDecode(questionText));
+            sqlCommand.Parameters.AddWithValue("@videoId", HttpUtility.UrlDecode(sampleYouTubeLink));
+            sqlCommand.Parameters.AddWithValue("@correctAnswerText", HttpUtility.UrlDecode(correctAnswerText));
+
+            //this time, we're not using a data adapter to fill a data table.  We're just
+            //opening the connection, telling our command to "executescalar" which says basically
+            //execute the query and just hand me back the number the query returns (the ID, remember?).
+            //don't forget to close the connection!
+            sqlConnection.Open();
+            //we're using a try/catch so that if the query errors out we can handle it gracefully
+            //by closing the connection and moving on
+            try
+            {
+                questionId = Convert.ToInt32(sqlCommand.ExecuteScalar());
+                //here, you could use this accountID for additional queries regarding
+                //the requested account.  Really this is just an example to show you
+                //a query where you get the primary key of the inserted row back from
+                //the database!
+            }
+            catch (Exception e)
+            {
+                return questionId; // will return -1
+            }
+
+            // add the wrong answers to their table
+            if (questionId != -1)
+            {
+                //string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+                //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+                //does is tell mySql server to return the primary key of the last inserted row.
+                string sqlSelectWrongAnswers = $"START TRANSACTION;" +
+                    $"INSERT into wrong_answers (wrongAnswerText, questionId ) values(@wrongAnswer1, {questionId});" +
+                    $"INSERT into wrong_answers (wrongAnswerText, questionId ) values(@wrongAnswer2, {questionId});" +
+                    $"INSERT into wrong_answers (wrongAnswerText, questionId ) values(@wrongAnswer3, {questionId});" +
+                    $"COMMIT;);" +
+                    $"SELECT LAST_INSERT_ID();";
+                // add creatorId
+                //MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommandWrongAnswers = new MySqlCommand(sqlSelectWrongAnswers, sqlConnection);
+
+                //sqlCommand.Parameters.AddWithValue("@creatorId", creatorId);
+                sqlCommandWrongAnswers.Parameters.AddWithValue("@wrongAnswer1", HttpUtility.UrlDecode(wrongAnswer1));
+                sqlCommandWrongAnswers.Parameters.AddWithValue("@wrongAnswer2", HttpUtility.UrlDecode(wrongAnswer2));
+                sqlCommandWrongAnswers.Parameters.AddWithValue("@wrongAnswer3", HttpUtility.UrlDecode(wrongAnswer3));
+
+                //this time, we're not using a data adapter to fill a data table.  We're just
+                //opening the connection, telling our command to "executescalar" which says basically
+                //execute the query and just hand me back the number the query returns (the ID, remember?).
+                //don't forget to close the connection!
+                //sqlConnection.Open();
+                //we're using a try/catch so that if the query errors out we can handle it gracefully
+                //by closing the connection and moving on
+                try
+                {
+                    questionId = Convert.ToInt32(sqlCommandWrongAnswers.ExecuteScalar());
+                    //here, you could use this accountID for additional queries regarding
+                    //the requested account.  Really this is just an example to show you
+                    //a query where you get the primary key of the inserted row back from
+                    //the database!
+                    sqlConnection.Close();
+                    return questionId;
+                }
+                catch (Exception e)
+                {
+                    sqlConnection.Close();
+                    return questionId; // will return -1
+                }
+            }
+            return questionId;
+        }
+        [WebMethod(EnableSession = true)]
+
+        public string EditQuestion(int questionId, string questionText, string sampleYouTubeLink, string correctAnswerText,  string wrongAnswer1, string wrongAnswer2, string wrongAnswer3)
+        {
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["myDB"].ConnectionString;
+            
+            string sqlSelect = $"update questions set questionText=@questionText, videoId=@videoId, correctAnswerText=@correctAnswerText where questionId=@questionId";
+            
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            sqlCommand.Parameters.AddWithValue("@questionId", questionId);
+            sqlCommand.Parameters.AddWithValue("@questionText", HttpUtility.UrlDecode(questionText));
+            sqlCommand.Parameters.AddWithValue("@videoId", HttpUtility.UrlDecode(sampleYouTubeLink));
+            sqlCommand.Parameters.AddWithValue("@correctAnswerText", HttpUtility.UrlDecode(correctAnswerText));
+            
+            sqlConnection.Open();
+
+            try
+            {
+                sqlCommand.ExecuteScalar();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return "failed at first try catch";
+            }
+
+            // We have to delete the wrong answers and start over
+            // then insert the changed ones
+            string sqlSelectWrongAnswers = "START TRANSACTION; DELETE from wrong_answers where questionId = @questionId; INSERT into wrong_answers(wrongAnswerText, questionId) values(@wrongAnswer1, @questionId); INSERT into wrong_answers(wrongAnswerText, questionId) values(@wrongAnswer2, @questionId); INSERT into wrong_answers(wrongAnswerText, questionId) values(@wrongAnswer3, @questionId); COMMIT;";
+
+            //MySqlConnection sqlConnectionWrong = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommandWrongAnswers = new MySqlCommand(sqlSelectWrongAnswers, sqlConnection);
+
+            sqlCommandWrongAnswers.Parameters.AddWithValue("@questionId", questionId);
+            sqlCommandWrongAnswers.Parameters.AddWithValue("@wrongAnswer1", HttpUtility.UrlDecode(wrongAnswer1));
+            sqlCommandWrongAnswers.Parameters.AddWithValue("@wrongAnswer2", HttpUtility.UrlDecode(wrongAnswer2));
+            sqlCommandWrongAnswers.Parameters.AddWithValue("@wrongAnswer3", HttpUtility.UrlDecode(wrongAnswer3));
+
+            try
+            {
+                sqlCommandWrongAnswers.ExecuteScalar();
+
+                sqlConnection.Close();
+                return "I returned from the sweet spot";
+            }
+            catch (Exception e)
+            {
+                sqlConnection.Close();
+                return "I failed at the second try catch";
+            }
+
+        }
     }
 }
+
