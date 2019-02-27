@@ -532,6 +532,8 @@ function CreateAccount(id, pass, fname, lname, email) {
 // Utilizes the CreateQuestion C# Web Service
 function CreateQuestion(creatorId, questionText, sampleTrackName, sampleArtistName, sampleYouTubeLink, songArtistName, songTitle, wrongAnswer1, wrongAnswer2, wrongAnswer3, wrongAnswer4) {
   var webMethod = 'AccountServices.asmx/CreateQuestion';
+  // add our configuration for the video
+  sampleYouTubeLink += "?enablejsapi=1";
   var parameters = `{
     "creatorId": ${encodeURI(creatorId)},
     "questionText": "${encodeURI(questionText)}",
@@ -591,6 +593,7 @@ function EditQuestion(questionId, questionText, sampleYouTubeLink, correctAnswer
       renderAccountSettingsPage(userInfo);
       renderUserCreatedQuestions(userQuestions);
       showPanel('accountSettingsTab');
+      GetQuestions();
     },
     error: function (e) {
       alert('boo...');
